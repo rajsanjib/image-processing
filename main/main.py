@@ -29,7 +29,7 @@ def imgToTxt(imagePath = 'image/pan_card_11.jpg'):
     ctrs, hier = cv2.findContours(img_dilation.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
     #sort contours
-    sorted_ctrs = sorted(ctrs, key=lambda ctr: cv2.boundingRect(ctr)[0])
+    sorted_ctrs = sorted(ctrs, key=lambda ctr: cv2.boundingRect(ctr)[1])
 
     out = []
     output = image.copy()

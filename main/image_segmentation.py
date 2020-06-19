@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import random as rng
 from matplotlib import pyplot as plt
-import text_recognition
+from main import text_recognition
 
 def preprocess():
     img = crop_card(img)

@@ -19,16 +19,12 @@ In root folder ``` python3 app.py```. Then open http://localhost:8000/ in browse
 ###Output Format
 ```
 {
-  "Output": [
-    "INCOME TAX DEPARTMENT",
-    "CHANDONA MONDAL",
-    "05/01/1981",
-    "BRINDABON MONDAL",
-    "Permanent Account Number",
-    "Signature",
-    "GOVT. OF INDIA",
-    "a"
-  ],
+  data: {
+    "DOB": "10/12/1983",
+    "Fathers Name": "AMAR SINGH",
+    "Name": "CHHOTU RAM",
+    "pan-id": "BLUPS4233F"
+  },
   "path": "images/out/pan_card_13.jpeg"
 }
 ```
