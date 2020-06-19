@@ -21,14 +21,11 @@ In root folder ``` python3 app.py```. Then open http://localhost:8000/ in browse
 {
   "Output": [
     "INCOME TAX DEPARTMENT",
-    "BSTIaAHe",
     "CHANDONA MONDAL",
     "05/01/1981",
     "BRINDABON MONDAL",
-    "e he \u00e9 pot =",
     "Permanent Account Number",
-    "\u2018Signature",
-    "Taapt",
+    "Signature",
     "GOVT. OF INDIA",
     "a"
   ],
