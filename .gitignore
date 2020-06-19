@@ -1,4 +1,4 @@
-./local
 ./env
 ./.ipynb*
 ./__pycache__
+./images/out/*

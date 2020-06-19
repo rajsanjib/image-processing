@@ -1,12 +1,8 @@
 import cv2
 import numpy as np
 import pytesseract
-from PIL import Image, ImageEnhance, ImageFilter
-import sys
-import re
-import dateutil.parser as dparser
 import image_segmentation
-
+from helper import filter_text
 
 def imgToTxt(imagePath = 'image/pan_card_11.jpg'):
     image = cv2.imread(imagePath)
@@ -22,14 +18,13 @@ def imgToTxt(imagePath = 'image/pan_card_11.jpg'):
     img_dilation = cv2.dilate(thresh, kernel, iterations=1)
 
     config = ('-l eng --oem 1 --psm 3')
-    # Initializing data variable
 
 
     #find contours
     ctrs, hier = cv2.findContours(img_dilation.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
     #sort contours
-    sorted_ctrs = sorted(ctrs, key=lambda ctr: cv2.boundingRect(ctr)[0])
+    sorted_ctrs = sorted(ctrs, key=lambda ctr: cv2.boundingRect(ctr)[1])
 
     out = []
     output = image.copy()
@@ -51,4 +46,4 @@ def imgToTxt(imagePath = 'image/pan_card_11.jpg'):
     			cv2.FONT_HERSHEY_SIMPLEX, 0.5, (25, 0, 51), 2)
     outpath = 'images/out/'+imagePath.replace('images/', '')
     cv2.imwrite(outpath, output)
-    return({'Output': out, 'path':outpath})
+    return({'Output': filter_text(out), 'path':outpath})
