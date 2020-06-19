@@ -5,8 +5,8 @@ from PIL import Image, ImageEnhance, ImageFilter
 import sys
 import re
 import dateutil.parser as dparser
-import image_segmentation
-
+from main import image_segmentation
+from main.helper import filter_text
 
 def imgToTxt(imagePath = 'image/pan_card_11.jpg'):
     image = cv2.imread(imagePath)
@@ -51,4 +51,4 @@ def imgToTxt(imagePath = 'image/pan_card_11.jpg'):
     			cv2.FONT_HERSHEY_SIMPLEX, 0.5, (25, 0, 51), 2)
     outpath = 'images/out/'+imagePath.replace('images/', '')
     cv2.imwrite(outpath, output)
-    return({'Output': out, 'path':outpath})
+    return({'Output': filter_text(out), 'path':outpath})

@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request
 import os
 # import image_segmentation
-import main
+from main import main
 
 app = Flask(__name__)
 
