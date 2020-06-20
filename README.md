@@ -1,6 +1,12 @@
 #### Text Detection on Image Using OpenCV and pytesseract
 
-### Create a virutalenv
+### 1, Clone the repo
+``` git clone git@github.com:covideoin/image-processing.git ``` or
+``` git clone https://github.com/covideoin/image-processing ```
+
+### 2. Inside the image-processing directory
+
+#### Create a virutalenv
 ``` virtualenv env -p python3 ```
 
 #### Activate virutalenv
@@ -14,9 +20,9 @@ Windows ```.\venv\Scripts\activate```
 ``` pip install -r requirements.txt ```
 
 ### Run app
-In root folder ``` python3 app.py```. Then open http://localhost:8000/ in browser
+In root folder ``` python3 app.py```. Then open http://localhost:8000/ in browser. Upload a picture of pan card.
 
-###Output Format
+### Output Format
 ```
 {
   data: {
@@ -27,7 +33,11 @@ In root folder ``` python3 app.py```. Then open http://localhost:8000/ in browse
   },
   "path": "images/out/pan_card_13.jpeg"
 }
+
+ **path is the location where the output image with tagged text is stored**
 ```
+
+
 Yet to separate name, dob etc... Will be pushed on next commit
 
 ### Techniques used

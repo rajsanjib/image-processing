@@ -1,10 +1,10 @@
 import cv2
 import numpy as np
 import pytesseract
-from PIL import Image, ImageEnhance, ImageFilter
+# from PIL import Image, ImageEnhance, ImageFilter
 import sys
 import re
-import dateutil.parser as dparser
+# import dateutil.parser as dparser
 from main import image_segmentation
 from main.helper import filter_text
 
