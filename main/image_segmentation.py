@@ -29,7 +29,7 @@ def crop_out_template(img):
     bottom_right = (top_left[0] + w, top_left[1] + h)
 
     ## Crop Image
-    l = int(bottom_right[0]/2)
+    l = int(bottom_right[0]*0.70)
     y = bottom_right[1]
     img = img[y:,0:l]
     return img
@@ -38,8 +38,8 @@ def crop_card(image):
     # Find countour by color range
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     # define range of blue color in HSV
-    lower_blue = np.array([36,22,22])
-    upper_blue = np.array([180,255,255])
+    lower_blue = np.array([170,160,170])
+    upper_blue = np.array([210,183,75])
     # Threshold the HSV image to get only blue colors
     mask = cv2.inRange (hsv, lower_blue, upper_blue)
     bluecnts = cv2.findContours(mask.copy(),
@@ -50,4 +50,6 @@ def crop_card(image):
         blue_area = max(bluecnts, key=cv2.contourArea)
         (xg,yg,wg,hg) = cv2.boundingRect(blue_area)
         image = image[yg:yg+hg, xg:xg+wg]
+    # cv2.imshow("Cropped Blue outline", image)
+    # cv2.waitKey(0)
     return image

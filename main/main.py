@@ -4,14 +4,20 @@ import pytesseract
 # from PIL import Image, ImageEnhance, ImageFilter
 import sys
 import re
+import os
 # import dateutil.parser as dparser
 from main import image_segmentation
 from main.helper import filter_text
 
-def imgToTxt(imagePath = 'image/pan_card_11.jpg'):
+def imgToTxt(imagePath):
     image = cv2.imread(imagePath)
+    # cv2.imshow("Original Image", image)
+    # cv2.waitKey(0)
     image = image_segmentation.crop_card(image)
     image = image_segmentation.crop_out_template(image)
+
+    # cv2.imshow("Cropped Image", image)
+    # cv2.waitKey(0)
     #grayscale
     gray = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
 
@@ -42,13 +48,20 @@ def imgToTxt(imagePath = 'image/pan_card_11.jpg'):
 
         if w > 15 and h > 15:
             text = pytesseract.image_to_string(roi, config=config)
-            # if(text == ''):
-            #     sorted_ctrs.pop(i)
-            #     continue
+            if(text == ''):
+                sorted_ctrs.pop(i)
+                continue
             out.append(text)
             cv2.rectangle(output,(x,y),( x + w, y + h ),(0,255,0),2)
             cv2.putText(output, text, (x, y + 30),
     			cv2.FONT_HERSHEY_SIMPLEX, 0.5, (25, 0, 51), 2)
+        # cv2.imshow("Final", output)
+        # cv2.waitKey(0)
+        # cv2.destroyAllWindows()
+    # Create out dir if not exists
+    if not os.path.exists('images/out'):
+        os.makedirs('images/out')
+    # Get the name of image
     outpath = 'images/out/'+imagePath.replace('images/', '')
     cv2.imwrite(outpath, output)
     return({'Output': filter_text(out), 'path':outpath})

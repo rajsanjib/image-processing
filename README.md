@@ -22,6 +22,9 @@ Windows ```.\venv\Scripts\activate```
 ### Run app
 In root folder ``` python3 app.py```. Then open http://localhost:8000/ in browser. Upload a picture of pan card.
 
+### To get the results in console
+In root folder ``` python app.py -i location/of/image ```
+
 ### Output Format
 ```
 {
