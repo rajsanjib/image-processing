@@ -33,8 +33,8 @@ def filter_text(text):
             if (len(text) == 10) and (i > 1) and '/' in text:
                 data['DOB'] = text
                 break
-        data['Fathers Name'] = nT[0]
-        data['Name'] = nT[1]
+        data['Fathers Name'] = nT[1]
+        data['Name'] = nT[0]
         return data
 
     return False
