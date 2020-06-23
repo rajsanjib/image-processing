@@ -1,5 +1,5 @@
 def filter_text(text):
-    if(len(text) > 1):
+    if(len(text) > 0):
         # Clean texts
         for i, lin in enumerate(text):
             text[i] = text[i].strip().rstrip().lstrip()
@@ -22,19 +22,30 @@ def filter_text(text):
         'DOB': '',
         'pan-id': ''
         }
+
+        # Filter personal account stuffs
+        cut = ['Personal', 'Account', 'Pendent']
+        for i, n in enumerate(nT):
+          for c in cut:
+            if c in n:
+              nT.pop(i)
+
         # If properly processed
         # Find text with length 10, after second index and does not contain / Its probably pan-id
         for i, text in enumerate(nT):
-            if (len(text) == 10) and (i > 1) and '/' not in text:
+            if (len(text) == 10) and (i > 1) and '/' not in text and not text.isdigit():
                 data['pan-id'] = text
                 break
         # Similar for date too
         for i, text in enumerate(nT):
-            if (len(text) == 10) and (i > 1) and '/' in text:
+            if (len(text) == 10) and (i > 1) and text.strip('/').isdigit():
                 data['DOB'] = text
                 break
-        data['Fathers Name'] = nT[1]
-        data['Name'] = nT[0]
+        try:
+            data['Fathers Name'] = nT[1]
+            data['Name'] = nT[0]
+        except:
+            pass
         return data
 
     return False
