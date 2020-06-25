@@ -11,48 +11,31 @@
 
 #### Activate virutalenv
 
-Linux ```source env/bin/activate```
-
-Windows ```.\venv\Scripts\activate```
+```source env/bin/activate```
 
 
 ### Install Dependencies
 ``` pip install -r requirements.txt ```
 
-### Run app
-In root folder ``` python3 app.py```. Then open http://localhost:8000/ in browser. Upload a picture of pan card.
+### Setup Flask application with gunicorn and nginx
+https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications-with-gunicorn-and-nginx-on-ubuntu-18-04
 
-### To get the results in console
-In root folder ``` python3 app.py -i location/of/image ```
 
-### To run all images in a directory
-``` python3 app.py -l directory/location ```
+### apis
+#### Request
+- /extract-pan-card
+    - Method [POST]
+    - Send [image] in base64 format
 
-### Output Format
+#### Response
 ```
 {
   data: {
-    "DOB": "10/12/1983",
-    "Fathers Name": "AMAR SINGH",
-    "Name": "CHHOTU RAM",
-    "pan-id": "BLUPS4233F"
+    "DOB": "",
+    "Fathers Name": "",
+    "Name": "",
+    "pan-id": ""
   },
-  "path": "images/out/pan_card_13.jpeg"
+  signature: "base64 data"
 }
-
- **path is the location where the output image with tagged text is stored**
 ```
-
-
-Yet to separate name, dob etc... Will be pushed on next commit
-
-### Techniques used
-1. crop image, take only the left half portion
-2. Apply grayscaling, binary threshold and dilation.
-3. Run pytesseract image to text on the result.
-4. Returns all possible text fields.
-
-### pytesseract config
-1. language - English (en)
-2. oem - 1 (Neural nets LSTM only)
-3. psm - 7 (Treat the image as a single text line)

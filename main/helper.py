@@ -1,3 +1,5 @@
+import re
+
 def filter_text(text):
     if(len(text) > 0):
         # Clean texts
@@ -23,24 +25,28 @@ def filter_text(text):
         'pan-id': ''
         }
 
+        # If properly processed
+        # Find text with length 10, after second index and does not contain / Its probably pan-id
+        for i, text in enumerate(nT):
+            if (len(text) == 10) and '/' not in text and not text.isdigit() and not text.isalpha():
+                data['pan-id'] = text
+                nT.pop(i)
+                break
+        # Similar for date too
+        pattern_date_time = '([0-9]{2}.[0-9]{2}.[0-9]{4})'
+        for i, text in enumerate(nT):
+          match = re.match(pattern_date_time, text)
+          if match is not None:
+              date = match.group()
+              data['DOB'] = date
+              nT.pop(i)
+              break
         # Filter personal account stuffs
-        cut = ['Personal', 'Account', 'Pendent']
+        cut = ['Personal', 'Account', 'Pendent', 'Government', 'Signature']
         for i, n in enumerate(nT):
           for c in cut:
             if c in n:
               nT.pop(i)
-
-        # If properly processed
-        # Find text with length 10, after second index and does not contain / Its probably pan-id
-        for i, text in enumerate(nT):
-            if (len(text) == 10) and (i > 1) and '/' not in text and not text.isdigit():
-                data['pan-id'] = text
-                break
-        # Similar for date too
-        for i, text in enumerate(nT):
-            if (len(text) == 10) and (i > 1) and text.strip('/').isdigit():
-                data['DOB'] = text
-                break
         try:
             data['Fathers Name'] = nT[1]
             data['Name'] = nT[0]
