@@ -1,14 +1,18 @@
 import cv2
 import numpy as np
 import pytesseract
+from skimage.measure import compare_ssim
+import imutils
 
 import sys
 import re
 import os
 import base64
 import json
+
 from main import image_segmentation
-from main.helper import filter_text
+from main.utils.text_helper import *
+from main.utils.utils import *
 
 SIGNATURE_WIDTH = 350
 SIGNATURE_HEIGHT = 70
@@ -26,19 +30,12 @@ def get_signature(text, image, roi, x, y, w, h):
         signature = None
     return signature
 
-def imgToTxt(im_b64):
-    im_bytes = base64.b64decode(im_b64)
-    im_arr = np.frombuffer(im_bytes, dtype=np.uint8)
-    image = cv2.imdecode(im_arr, flags=cv2.IMREAD_COLOR)
-    # image = crop_image(imagePath)
-    # cv2.imshow("Cropped Image", image)
-    # cv2.waitKey(0)
+def panToTxt(im_b64):
+    image = b64_to_img(im_b64)
+
     image = image_segmentation.crop_card(image)
     image = image_segmentation.crop_out_template(image)
 
-    # cv2.imshow("Cropped Image", image)
-    # cv2.waitKey(0)
-    #grayscale
     gray = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
 
     #binary
@@ -46,7 +43,6 @@ def imgToTxt(im_b64):
     #dilation
     kernel = np.ones((10,15), np.uint8)
     img_dilation = cv2.dilate(thresh, kernel, iterations=1)
-
 
     #find contours
     ctrs, hier = cv2.findContours(img_dilation.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -76,11 +72,75 @@ def imgToTxt(im_b64):
                   _, im_arr = cv2.imencode('.jpeg', signature)
                   im_bytes = im_arr.tobytes()
                   im_b64 = base64.b64encode(im_bytes)
-
-            # data["signature"] = base64.b64encode(bytes(im_b64, 'utf-8')).decode("ascii")
-            # data["signature"] = im_b64.decode['ascii']
-
             out.append(text)
+            cv2.rectangle(output,(x,y),( x + w, y + h ),(0,255,0),2)
+            cv2.putText(output, text, (x, y + 30),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (25, 0, 51), 2)
 
-    data['data'] = filter_text(out)
-    return data
+    if not os.path.exists('images/out'):
+        os.makedirs('images/out')
+    # Get the name of image
+    outpath = 'images/out/'+imagePath.replace('images/', '')
+    # print("Collected: ", out)
+    cv2.imwrite(outpath, output)
+    # return({'Output': filter_text(out), 'path':outpath})
+    return filter_text(out)
+
+def adharToTxt(im_b64):
+    image = b64_to_img(im_b64)
+
+    # image = image_segmentation.crop_card(image)
+    image = image_segmentation.crop_out_template(image, template = 'images/templates/adhar_card.jpg')
+    #grayscale
+    gray = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
+    #binary
+    ret,thresh = cv2.threshold(gray,127,255,cv2.THRESH_BINARY_INV)
+    #dilation
+    kernel = np.ones((10,15), np.uint8)
+    img_dilation = cv2.dilate(thresh, kernel, iterations=1)
+
+    config = ('-l eng --oem 1 --psm 6')
+    # Initializing data variable
+
+    #find contours
+    ctrs, hier = cv2.findContours(img_dilation.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    #sort contours
+    sorted_ctrs = sorted(ctrs, key=lambda ctr: cv2.boundingRect(ctr)[1])
+
+    out = []
+    output = image.copy()
+    for i, ctr in enumerate(sorted_ctrs):
+        # Get bounding box
+        x, y, w, h = cv2.boundingRect(ctr)
+        # Getting ROI
+        roi = image[y:y+h, x:x+w]
+        if w > 15 and h > 15:
+            text = pytesseract.image_to_string(roi, config=config)
+            if "Address" in text:
+                return get_address(text)
+            out.append(text)
+            cv2.rectangle(output,(x,y),( x + w, y + h ),(0,255,0),2)
+            cv2.putText(output, text, (x, y + 30),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (25, 0, 51), 2)
+
+    return filter_text_for_adhar(out)
+
+def get_address(text):
+    return {'Address': text}
+    
+def compare_images(img_1, img_2):
+    # load the two input images
+    imageA = b64_to_img(img_1)
+    imageB = b64_to_img(img_2)
+
+    faceA = get_face(imageA)
+    faceB = get_face(imageB)
+    # convert the images to grayscale
+    grayA = cv2.cvtColor(faceA, cv2.COLOR_BGR2GRAY)
+    grayB = cv2.cvtColor(faceB, cv2.COLOR_BGR2GRAY)
+
+    # compute the Structural Similarity Index (SSIM) between the two
+    # images, ensuring that the difference image is returned
+    (score, diff) = compare_ssim(grayA, grayB, full=True)
+    diff = (diff * 255).astype("uint8")
+    return {"score":score}

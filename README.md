@@ -22,12 +22,12 @@ https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications
 
 
 ### apis
-#### Request
-- /extract-pan-card
-    - Method [POST]
-    - Send [image] in base64 format
+api is served on port 5000
+- ##### /extract-pan-card
+    - Request Method [POST]
+    - ```{"image": "base64 encoded image"}```
 
-#### Response
+    #### Response
 ```
 {
   data: {
@@ -39,3 +39,39 @@ https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications
   signature: "base64 data"
 }
 ```
+
+- ##### /extract-adhar-card
+    - Method [POST]
+    - ```{"image": "base64 encoded image"}```
+
+    Response
+```
+  data: {
+    "DOB": "",
+    "Name": "",
+    "Gender": "",
+    "adhar-id": ""
+  },
+
+  or
+  data: {
+    address: address
+  }
+  if backside is given
+```
+
+- ##### /comapre-faces
+    - Method [POST]
+    - ```
+        {
+         'image1': 'base64 encoded image',
+         'image2': 'base64 encoded image'
+        }
+        ```
+
+      Response
+      ```
+        {
+          score: match_value[0-1]
+        }
+      ```

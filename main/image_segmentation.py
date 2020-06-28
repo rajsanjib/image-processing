@@ -12,8 +12,8 @@ def preprocess():
 
     return tH
 
-def crop_out_template(img):
-    tmp = cv2.imread('images/templates/logo.jpeg')
+def crop_out_template(img, template):
+    tmp = cv2.imread(template)
 
     # Resize template if template is bigger than the image
     if tmp.shape[1] > img.shape[1]:
@@ -29,7 +29,7 @@ def crop_out_template(img):
     bottom_right = (top_left[0] + w, top_left[1] + h)
 
     ## Crop Image
-    l = int(bottom_right[0]*0.70)
+    l = int(bottom_right[0])
     y = bottom_right[1]
     img = img[y:,0:l]
     return img
