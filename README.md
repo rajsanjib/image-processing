@@ -5,6 +5,9 @@
 ``` git clone https://github.com/covideoin/image-processing ```
 
 ### 2. Inside the image-processing directory
+  ``` git pull origin dev```
+
+  ``` git checkout dev```
 
 #### Create a virutalenv
 ``` virtualenv env -p python3 ```
@@ -17,11 +20,11 @@
 ### Install Dependencies
 ``` pip install -r requirements.txt ```
 
-### Setup Flask application with gunicorn and nginx
-https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications-with-gunicorn-and-nginx-on-ubuntu-18-04
+### Run
+```python app.py```
 
 
-### apis
+### api Endpoints
 api is served on port 5000
 - ##### /extract-pan-card
     - Request Method [POST]

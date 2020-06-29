@@ -31,7 +31,8 @@ def get_signature(text, image, roi, x, y, w, h):
     return signature
 
 def panToTxt(im_b64):
-    image = b64_to_img(im_b64)
+    # image = b64_to_img(im_b64)
+    image = cv2.imread(im_b64)
 
     image = image_segmentation.crop_card(image)
     image = image_segmentation.crop_out_template(image, template = 'images/templates/logo.jpeg')
@@ -67,20 +68,24 @@ def panToTxt(im_b64):
             for s in sign:
                 if s in text:
                   signature = get_signature(text, image, roi, x, y, w, h)
-                  # if signature is not None:
-                  #   cv2.imwrite('images/signature/'+imagePath.replace('images/', ''), signature)
-                  _, im_arr = cv2.imencode('.jpeg', signature)
-                  im_bytes = im_arr.tobytes()
-                  im_b64 = base64.b64encode(im_bytes)
-                  data["signature"] = im_b64.decode('ascii')
-                  final_data = json.dumps(data)
-                  final_data = json.loads(final_data)
+                  if signature is not None:
+                    if not os.path.exists('images/signature'):
+                        os.makedirs('images/signature')
+                    cv2.imwrite('images/signature/'+im_b64.replace('images/', ''), signature)
+                  # _, im_arr = cv2.imencode('.jpeg', signature)
+                  # im_bytes = im_arr.tobytes()
+                  # im_b64 = base64.b64encode(im_bytes)
+                  # data["signature"] = im_b64.decode('ascii')
+                  # final_data = json.dumps(data)
+                  # final_data = json.loads(final_data)
             out.append(text)
     data["data"] = filter_text(out)
     return data
 
 def adharToTxt(im_b64):
-    image = b64_to_img(im_b64)
+    print("Got")
+    # image = b64_to_img(im_b64)
+    image = cv2.imread(im_b64)
 
     # image = image_segmentation.crop_card(image)
     image = image_segmentation.crop_out_template(image, template = 'images/templates/adhar_card.jpg')
@@ -127,9 +132,11 @@ def get_address(image):
 
 def compare_images(img_1, img_2):
     # load the two input images
-    imageA = b64_to_img(img_1)
-    imageB = b64_to_img(img_2)
-
+    # imageA = b64_to_img(img_1)
+    # imageB = b64_to_img(img_2)
+    imageA = cv2.imread(img_1, 1)
+    imageB = cv2.imread(img_2, 1)
+    
     faceA = get_face(imageA)
     faceB = get_face(imageB)
     # convert the images to grayscale
