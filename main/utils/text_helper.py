@@ -34,6 +34,7 @@ def filter_text(text):
           for c in cut:
             if c in n:
               nT.pop(i)
+        nT = remove_extra_text(nT)
         try:
             data['Fathers Name'] = nT[1]
             data['Name'] = nT[0]
@@ -45,7 +46,6 @@ def filter_text(text):
 
 
 def filter_text_for_adhar(text):
-    print(text)
     if len(text) > 0:
         nT = clean(text)
 
@@ -66,10 +66,12 @@ def filter_text_for_adhar(text):
                 nT.pop(i)
                 break
 
-        pattern_id_number = re.compile(r'([0-9]{4}$)')
+        pattern_id_number = re.compile(r'(^[0-9]{4}$)')
         id = ''
         for i, text in enumerate(nT):
           match = re.search(pattern_id_number, text)
+          print('text', text)
+          print('Match', match)
           if match is not None:
               find = match.group()
               id += find+' '
@@ -100,12 +102,12 @@ def filter_text_for_adhar(text):
 def remove_extra_text(list):
     new = []
     for text in list:
-      reg=re.compile('^[a-z0-9\.]+$')
-      if not (reg.match(text)):
-          if len(text) > 3:
-            if (collections.Counter(text)['\s']) < 2:
-                if 'Name' not in text and 'DOB' not in text:
-                    new.append(text)
+      if not set('[~!@#$%^&*()_+{}":;\']+$').intersection(text):
+          if len([l for l in text if l.isupper()]) > 1:
+              if len(text) > 3:
+                if (collections.Counter(text)['\s']) < 2:
+                    if 'Name' not in text and 'DOB' not in text:
+                        new.append(text)
     return new
 
 def clean(text):
@@ -125,3 +127,8 @@ def clean(text):
     # Remove empty strings
     nT = list(filter(None, nT))
     return nT
+
+
+def filter_address(text):
+    text = text[text.find('Address:'):].replace('Address:', '')
+    return text

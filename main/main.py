@@ -34,7 +34,7 @@ def panToTxt(im_b64):
     image = b64_to_img(im_b64)
 
     image = image_segmentation.crop_card(image)
-    image = image_segmentation.crop_out_template(image)
+    image = image_segmentation.crop_out_template(image, template = 'images/templates/logo.jpeg')
 
     gray = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
 
@@ -72,19 +72,12 @@ def panToTxt(im_b64):
                   _, im_arr = cv2.imencode('.jpeg', signature)
                   im_bytes = im_arr.tobytes()
                   im_b64 = base64.b64encode(im_bytes)
+                  data["signature"] = im_b64.decode('ascii')
+                  final_data = json.dumps(data)
+                  final_data = json.loads(final_data)
             out.append(text)
-            cv2.rectangle(output,(x,y),( x + w, y + h ),(0,255,0),2)
-            cv2.putText(output, text, (x, y + 30),
-                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (25, 0, 51), 2)
-
-    if not os.path.exists('images/out'):
-        os.makedirs('images/out')
-    # Get the name of image
-    outpath = 'images/out/'+imagePath.replace('images/', '')
-    # print("Collected: ", out)
-    cv2.imwrite(outpath, output)
-    # return({'Output': filter_text(out), 'path':outpath})
-    return filter_text(out)
+    data["data"] = filter_text(out)
+    return data
 
 def adharToTxt(im_b64):
     image = b64_to_img(im_b64)
@@ -117,7 +110,7 @@ def adharToTxt(im_b64):
         if w > 15 and h > 15:
             text = pytesseract.image_to_string(roi, config=config)
             if "Address" in text:
-                return get_address(text)
+                return get_address(image)
             out.append(text)
             cv2.rectangle(output,(x,y),( x + w, y + h ),(0,255,0),2)
             cv2.putText(output, text, (x, y + 30),
@@ -125,9 +118,13 @@ def adharToTxt(im_b64):
 
     return filter_text_for_adhar(out)
 
-def get_address(text):
-    return {'Address': text}
-    
+def get_address(image):
+    c, w, h = image.shape[::-1]
+    image = image[0:h, int(w/2.5):w]
+    address = pytesseract.image_to_string(image, config=config)
+    address = filter_address(address)
+    return {'Address': address}
+
 def compare_images(img_1, img_2):
     # load the two input images
     imageA = b64_to_img(img_1)

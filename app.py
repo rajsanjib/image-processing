@@ -20,14 +20,20 @@ def extract_pan_card():
 @app.route('/extract-adhar-card', methods=["POST"])
 def extract_adhar_card():
     im_64 = request.json['image']
-    response = main.adharToTxt(im_64)
+    try:
+        response = main.adharToTxt(im_64)
+    except Exception as e:
+        response = f"[ERROR]: {e}"
     return jsonify(response)
 
 @app.route('/compare-faces', methods=["post"])
 def compare_faces():
     image1 = request.json['image1']
     image2 = request.json['image2']
-    response = main.compare_images(image1, image2)
+    try:
+        response = main.compare_images(image1, image2)
+    except Exception as e:
+        response = f"[ERROR]: {e}"
     return jsonify(response)
 
 if __name__ == '__main__':
