@@ -1,35 +1,46 @@
 from flask import Flask, render_template, request, jsonify
 import os
+import json
 # import image_segmentation
 from main import main
 import sys
 import argparse
 import glob
+import logging
+
 
 app = Flask(__name__)
+logging.basicConfig(filename='api.log', level=logging.DEBUG)
 
 @app.route('/extract-pan-card', methods=["POST"])
 def extract_pan_card():
-    image = request.json['image']
+    content = request.data.decode('utf-8')
+    data_dict = json.loads(content)
+    im_b64 = data_dict['image']
     try:
-        response = main.panToTxt(image)
+        response = main.panToTxt(im_b64)
     except Exception as e:
         response = f"[ERROR]: {e}"
     return jsonify(response)
 
 @app.route('/extract-adhar-card', methods=["POST"])
 def extract_adhar_card():
-    im_64 = request.json['image']
+    content = request.data.decode('utf-8')
+    data_dict = json.loads(content)
+    image = data_dict['image']
+    im_b64 = request.json['image']
     try:
-        response = main.adharToTxt(im_64)
+        response = main.adharToTxt(im_b64)
     except Exception as e:
         response = f"[ERROR]: {e}"
     return jsonify(response)
 
 @app.route('/compare-faces', methods=["post"])
 def compare_faces():
-    image1 = request.json['image1']
-    image2 = request.json['image2']
+    content = request.data.decode('utf-8')
+    data_dict = json.loads(content)
+    image1 = data_dict['image1']
+    image2 = data_dict['image2']
     try:
         response = main.compare_images(image1, image2)
     except Exception as e:

@@ -60,7 +60,7 @@ api is served on port 5000
   if backside is given
 ```
 
-- ##### /comapre-faces
+- ##### /compare-faces
     - Method [POST]
     - ```
         {

@@ -21,6 +21,7 @@ config = ('-l eng --oem 1 --psm 3')
 
 
 def get_signature(text, image, roi, x, y, w, h):
+    signature = None
     try:
         if '\n' in text:
             signature = image[y + h - 100: y + h, x: x + SIGNATURE_WIDTH]
@@ -33,7 +34,7 @@ def get_signature(text, image, roi, x, y, w, h):
 def panToTxt(im_b64):
     image = b64_to_img(im_b64)
 
-    image = image_segmentation.crop_card(image)
+    # image = image_segmentation.crop_card(image)
     image = image_segmentation.crop_out_template(image, template = 'images/templates/logo.jpeg')
 
     gray = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
@@ -69,12 +70,14 @@ def panToTxt(im_b64):
                   signature = get_signature(text, image, roi, x, y, w, h)
                   # if signature is not None:
                   #   cv2.imwrite('images/signature/'+imagePath.replace('images/', ''), signature)
-                  _, im_arr = cv2.imencode('.jpeg', signature)
-                  im_bytes = im_arr.tobytes()
-                  im_b64 = base64.b64encode(im_bytes)
-                  data["signature"] = im_b64.decode('ascii')
-                  final_data = json.dumps(data)
-                  final_data = json.loads(final_data)
+                  data["signature"] =  ""
+                  if signature is not None:
+                      _, im_arr = cv2.imencode('.jpeg', signature)
+                      im_bytes = im_arr.tobytes()
+                      im_b64 = base64.b64encode(im_bytes)
+                      data["signature"] = im_b64.decode('ascii')
+                      final_data = json.dumps(data)
+                      final_data = json.loads(final_data)
             out.append(text)
     data["data"] = filter_text(out)
     return data

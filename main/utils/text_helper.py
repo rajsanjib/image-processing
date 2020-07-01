@@ -70,8 +70,6 @@ def filter_text_for_adhar(text):
         id = ''
         for i, text in enumerate(nT):
           match = re.search(pattern_id_number, text)
-          print('text', text)
-          print('Match', match)
           if match is not None:
               find = match.group()
               id += find+' '
