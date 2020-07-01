@@ -27,8 +27,7 @@ def extract_pan_card():
 def extract_adhar_card():
     content = request.data.decode('utf-8')
     data_dict = json.loads(content)
-    image = data_dict['image']
-    im_b64 = request.json['image']
+    im_b64 = data_dict['image']
     try:
         response = main.adharToTxt(im_b64)
     except Exception as e:
