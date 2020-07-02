@@ -1,5 +1,6 @@
 import re
 import collections
+import random
 
 def filter_text(text):
     if(len(text) > 0):
@@ -36,8 +37,8 @@ def filter_text(text):
               nT.pop(i)
         nT = remove_extra_text(nT)
         try:
-            data['Fathers Name'] = nT[1]
-            data['Name'] = nT[0]
+            data['Name'] = try_name(nT)
+            data['Fathers Name'] = try_name(nT.remove())
         except:
             pass
         return data
@@ -93,40 +94,64 @@ def filter_text_for_adhar(text):
               nT.pop(i)
               break
         nT = remove_extra_text(nT)
-        data['Name'] = nT[0]
+        if(len(nT) > 0):
+            data['Name'] = try_name(nT)
         return data
 
+def try_name(list):
+    name = None
+    if len(list) > 0:
+        for text in list:
+            if (re.fullmatch('[A-Za-z]{2,25}\s([A-Z][a-z]{2,25})?', text)) is not None:
+                print(text)
+                return text
+            elif (re.fullmatch('[A-Za-z]{2,25}?', text)) is not None:
+                name = text
+        if name is not None:
+            return name
+        else:
+            return random.choice(list)
+    return None
 
 def remove_extra_text(list):
     new = []
-    for text in list:
-      if not set('[~!@#$%^&*()_+{}":;\']+$').intersection(text):
-          if len([l for l in text if l.isupper()]) > 1:
-              if len(text) > 3:
-                if (collections.Counter(text)['\s']) < 2:
-                    if 'Name' not in text and 'DOB' not in text:
-                        new.append(text)
-    return new
+    print(list)
+    if len(list) > 0:
+        for text in list:
+          if not set('[~!@#$%^&*()_+{}":;\']+$').intersection(text):
+              if len([l for l in text if l.isupper()]) > 0:
+                  if len(text) > 3:
+                    if (collections.Counter(text)[' ']) < 2:
+                      if not any(s in text for s in ['Name', 'DOB', 'MALE']):
+                          if (re.fullmatch('[A-Z][A-Z|a-z]{2,25} ([A-Z][A-Z|a-z]{2,25})?', text.replace('.', ''))) is not None:
+                            new.append(text)
+        return new
+    return None
 
 def clean(text):
     # Clean texts
-    for i, lin in enumerate(text):
-        text[i] = text[i].strip()
-    nT = []
-    # Arrange a string with \n into multiple strings
-    for i, lin in enumerate(text):
-        b = lin.find('\n')
-        while( b != -1):
-            take = lin[:b]
-            nT.append(take)
-            lin = lin[b+1:]
+    if len(text) > 0:
+        for i, lin in enumerate(text):
+            text[i] = text[i].strip()
+        nT = []
+        # Arrange a string with \n into multiple strings
+        for i, lin in enumerate(text):
             b = lin.find('\n')
-        nT.append(lin)
-    # Remove empty strings
-    nT = list(filter(None, nT))
-    return nT
-
+            while( b != -1):
+                take = lin[:b]
+                nT.append(take)
+                lin = lin[b+1:]
+                b = lin.find('\n')
+            nT.append(lin)
+        # Remove empty strings
+        nT = list(filter(None, nT))
+        return nT
+    return None
 
 def filter_address(text):
     text = text[text.find('Address:'):].replace('Address:', '')
     return text
+
+# def remove_nonsense_words(text):
+#     words = set(nltk.corpus.words.words())
+#     " ".join(w for w in nltk.wordpunct_tokenize(text) if w.lower() in words or not w.isalpha())
