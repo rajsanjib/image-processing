@@ -1,4 +1,6 @@
-from flask import Flask, flash, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify
+from flask_cors import CORS
+
 import os
 import json
 # import image_segmentation
@@ -10,6 +12,8 @@ import glob
 import logging
 
 app = Flask(__name__)
+CORS(app)
+
 logging.basicConfig(filename='api.log', level=logging.DEBUG)
 UPLOAD_FOLDER = 'uploads/'
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
