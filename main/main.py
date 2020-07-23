@@ -13,6 +13,7 @@ import json
 from main import image_segmentation
 from main.utils.text_helper import *
 from main.utils.utils import *
+from main.utils.border_detection import find_border
 
 SIGNATURE_WIDTH = 350
 SIGNATURE_HEIGHT = 70
@@ -34,7 +35,7 @@ def get_signature(text, image, roi, x, y, w, h):
 def panToTxt(im_b64):
     image = b64_to_img(im_b64)
 
-    # image = image_segmentation.crop_card(image)
+    image = find_border(image)
     image = image_segmentation.crop_out_template(image, template = 'images/templates/logo.jpeg')
 
     gray = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
@@ -85,7 +86,7 @@ def panToTxt(im_b64):
 def adharToTxt(im_b64):
     image = b64_to_img(im_b64)
 
-    # image = image_segmentation.crop_card(image)
+    image = find_border(image)
     image = image_segmentation.crop_out_template(image, template = 'images/templates/adhar_card.jpg')
     #grayscale
     gray = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)

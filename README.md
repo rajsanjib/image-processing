@@ -20,14 +20,31 @@
 ### Setup Flask application with gunicorn and nginx
 https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications-with-gunicorn-and-nginx-on-ubuntu-18-04
 
+### Install dlib
+
+Try installing python module of dlib ``` pip install dlib```
+```
+wget http://dlib.net/files/dlib-19.6.tar.bz2
+tar xvf dlib-19.6.tar.bz2
+cd dlib-19.6/
+mkdir build
+cd build
+cmake ..
+cmake --build . --config Release
+sudo make install
+sudo ldconfig
+```
+
 
 ### apis
 api is served on port 5000
-- ##### /extract-pan-card
+- ##### /extract_pan_card
     - Request Method [POST]
-    - ```{"image": "base64 encoded image"}```
+    - Request
 
-    #### Response
+    ```{"image": "base64 encoded image"}```
+
+    - Response
 ```
 {
   data: {
@@ -40,38 +57,59 @@ api is served on port 5000
 }
 ```
 
-- ##### /extract-adhar-card
+- ##### /extract_adhar_card
     - Method [POST]
-    - ```{"image": "base64 encoded image"}```
+    - Request
 
-    Response
-```
+    ```{"image": "base64 encoded image"}```
+
+    - Response
+  ```
   data: {
     "DOB": "",
     "Name": "",
     "Gender": "",
     "adhar-id": ""
   },
-
+  ```
   or
+  ```
   data: {
-    address: address
+      "address": address
   }
+  ```
   if backside is given
-```
 
-- ##### /compare-faces
+- ##### /compare_faces
     - Method [POST]
-    - ```
+    - Request
+    ```
         {
          'image1': 'base64 encoded image',
          'image2': 'base64 encoded image'
         }
         ```
 
-      Response
+    - Response
       ```
         {
           score: match_value[0-1]
         }
       ```
+
+- ##### /convert_pdf
+    - Method [POST]
+    - Request
+    ```
+        {
+         'file': 'base64 encoded pdf file',
+        }
+        ```
+
+    - Response
+      ```
+        {
+          "image_filename": "filename.jpg"
+        }
+      ```
+converted image will be stored as ```temp/pdf-to-image/filename.jpg```
