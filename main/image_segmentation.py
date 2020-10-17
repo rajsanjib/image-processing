@@ -13,13 +13,13 @@ def preprocess():
     return tH
 
 def crop_out_template(img, template):
-    tmp = cv2.imread(template)
+    tmp = cv2.imread(template, 0)
 
     # Resize template if template is bigger than the image
     if tmp.shape[1] > img.shape[1]:
         ratio = img.shape[1]/tmp.shape[1]
         tmp = cv2.resize(tmp, (0,0), fx=ratio, fy=ratio)
-    c, w, h = tmp.shape[::-1]
+    w, h = tmp.shape[::-1]
 
     # Apply template Matching
     res = cv2.matchTemplate(img,tmp,cv2.TM_CCOEFF)

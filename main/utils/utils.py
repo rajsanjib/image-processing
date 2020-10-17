@@ -8,7 +8,7 @@ import codecs
 def b64_to_img(im_b64):
     im_bytes = base64.b64decode(im_b64)
     im_arr = np.frombuffer(im_bytes, dtype=np.uint8)
-    image = cv2.imdecode(im_arr, flags=cv2.IMREAD_COLOR)
+    image = cv2.imdecode(im_arr, flags=cv2.IMREAD_GRAYSCALE)
     return image
 
 def b64_to_pdf(pdf_b64):

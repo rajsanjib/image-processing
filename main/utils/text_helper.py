@@ -43,7 +43,7 @@ def filter_text(text):
             pass
         return data
 
-    return False
+    return {"message": "No text found!"}
 
 
 def filter_text_for_adhar(text):
@@ -103,7 +103,6 @@ def try_name(list):
     if len(list) > 0:
         for text in list:
             if (re.fullmatch('[A-Za-z]{2,25}\s([A-Z][a-z]{2,25})?', text)) is not None:
-                print(text)
                 return text
             elif (re.fullmatch('[A-Za-z]{2,25}?', text)) is not None:
                 name = text
@@ -115,7 +114,6 @@ def try_name(list):
 
 def remove_extra_text(list):
     new = []
-    print(list)
     if len(list) > 0:
         for text in list:
           if not set('[~!@#$%^&*()_+{}":;\']+$').intersection(text):

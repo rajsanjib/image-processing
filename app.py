@@ -10,6 +10,7 @@ import sys
 import argparse
 import glob
 import logging
+import base64
 
 app = Flask(__name__)
 CORS(app)
@@ -19,18 +20,34 @@ UPLOAD_FOLDER = 'uploads/'
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-@app.route('/extract_pan_card', methods=["POST"])
+@app.route('/extract-pan-card', methods=["POST"])
 def extract_pan_card():
     content = request.data.decode('utf-8')
     data_dict = json.loads(content)
     im_b64 = data_dict['image']
-    try:
-        response = main.panToTxt(im_b64)
-    except Exception as e:
-        response = f"[ERROR]: {e}"
+    # try:
+    #     response = main.panToTxt(im_b64)
+    # except Exception as e:
+    #     response = f"[ERROR]: {e}"
+    response = main.panToTxt(im_b64)
     return jsonify(response)
 
-@app.route('/extract_adhar_card', methods=["POST"])
+
+@app.route('/upload-pan', methods=["POST"])
+def upload_pan():
+    uploaded_file = request.files['file']
+    if uploaded_file.filename != '':
+        path = 'images/uploads/'+uploaded_file.filename
+        uploaded_file.save(path)
+        with open(path, "rb") as image_file:
+            encoded_string = base64.b64encode(image_file.read())
+    # try:
+    response = main.panToTxt(encoded_string)
+    # except Exception as e:
+    #     response = f"[ERROR]: {e}"
+    return jsonify(response)
+
+@app.route('/extract-adhar-card', methods=["POST"])
 def extract_adhar_card():
     content = request.data.decode('utf-8')
     data_dict = json.loads(content)
@@ -41,7 +58,7 @@ def extract_adhar_card():
         response = f"[ERROR]: {e}"
     return jsonify(response)
 
-@app.route('/compare_faces', methods=["post"])
+@app.route('/compare-faces', methods=["post"])
 def compare_faces():
     content = request.data.decode('utf-8')
     data_dict = json.loads(content)
@@ -53,7 +70,7 @@ def compare_faces():
         response = f"[ERROR]: {e}"
     return jsonify(response)
 
-@app.route('/convert_pdf', methods=["POST"])
+@app.route('/convert-pdf', methods=["POST"])
 def convert_pdf():
     if request.method == 'POST':
         content = request.data.decode('utf-8')

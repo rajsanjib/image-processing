@@ -20,7 +20,6 @@ SIGNATURE_HEIGHT = 70
 
 config = ('-l eng --oem 1 --psm 3')
 
-
 def get_signature(text, image, roi, x, y, w, h):
     signature = None
     try:
@@ -37,15 +36,22 @@ def panToTxt(im_b64):
 
     image = find_border(image)
     image = image_segmentation.crop_out_template(image, template = 'images/templates/logo.jpeg')
-
-    gray = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
+    # gray = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
 
     #binary
-    ret,thresh = cv2.threshold(gray,127,255,cv2.THRESH_BINARY_INV)
+    thresh = cv2.adaptiveThreshold(image,255,cv2.ADAPTIVE_THRESH_MEAN_C,cv2.THRESH_BINARY,11,2)
+
+    scale_factor = 6
+    scaled_img = cv2.resize(thresh, (0,0), fx=scale_factor, fy=scale_factor, interpolation=cv2.INTER_CUBIC)
+    cv2.imshow("image", scaled_img)
+    cv2.waitKey(0)
+
     #dilation
-    kernel = np.ones((10,15), np.uint8)
+    kernel = np.ones((2,2), np.uint8)
     img_dilation = cv2.dilate(thresh, kernel, iterations=1)
 
+    cv2.imshow('rect', img_dilation)
+    cv2.waitKey(0)
     #find contours
     ctrs, hier = cv2.findContours(img_dilation.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
@@ -63,8 +69,11 @@ def panToTxt(im_b64):
         roi = image[y:y+h, x:x+w]
 
         if w > 15 and h > 15:
+            cv2.rectangle(image,(x,y),(x+w,y+h),(0,255,0),5)
+        # cv2.imshow('rect', image)
+        # cv2.waitKey(0)
+        # cv2.destroyAllWindows()
             text = pytesseract.image_to_string(roi, config=config)
-
             sign = ['Signature', 'signature', 'sign']
             for s in sign:
                 if s in text:
