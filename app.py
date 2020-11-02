@@ -6,6 +6,8 @@ import json
 # import image_segmentation
 from main import main
 from main.convert_pdf import convert
+from main.classification_model import classify_image
+
 import sys
 import argparse
 import glob
@@ -85,6 +87,17 @@ def convert_pdf():
         except Exception as e:
             response = f"[ERROR]: {e}"
         return jsonify(response)
+
+@app.route('/classify', methods=["POST"])
+def classify():
+    if request.method == 'POST':
+        content = request.data.decode('utf-8')
+        image = json.loads(content)['image']
+        if image:
+            response = classify_image(image)
+            return jsonify(response)
+        return jsonify({"message": "Upload invalid!"})
+    return jsonify({"message": "Invalid request method!"})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port='5000', debug=True)

@@ -1,6 +1,6 @@
 #### Text Detection on Image Using OpenCV and pytesseract
 
-### 1, Clone the repo
+### 1. Clone the repo
 ``` git clone git@github.com:covideoin/image-processing.git ``` or
 ``` git clone https://github.com/covideoin/image-processing ```
 
@@ -16,6 +16,11 @@
 
 ### Install Dependencies
 ``` pip install -r requirements.txt ```
+
+<i>**Might need to install following dependency for tensorflow</i>
+
+```sudo apt-get install libcudart10.1```
+
 
 ### Setup Flask application with gunicorn and nginx
 https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications-with-gunicorn-and-nginx-on-ubuntu-18-04
@@ -113,3 +118,20 @@ api is served on port 5000
         }
       ```
 converted image will be stored as ```temp/pdf-to-image/filename.jpg```
+
+- ##### /classify
+  Returns predicted label of given document ==> pan-card | aadhar-card | driving-license
+    - Method [POST]
+    - Request
+    ```
+        {
+         'image': 'base64 encoded image file',
+        }
+        ```
+
+    - Response
+      ```
+        {
+          "label": "pan-card/aadhar-card/driving-license"
+        }
+      ```
