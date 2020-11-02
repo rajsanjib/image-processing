@@ -2,15 +2,15 @@ name: Upload Files to Server
 on:
   push:
     branches: [ test ]
-  jobs:
-    build:
-      runs-on: ubuntu-latest
-      steps:
-        - name: Copy files to server
-          run: |
-            ls -la
-          shell: bash
-          env:
-            SSH_PRIVATE_KEY: ${{secrets.SSH_PASS}}
-            SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS}}
-            SSH_DIR_PATH: ${{ github.workspace }}
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Copy files to server
+        run: |
+          ls -la
+        shell: bash
+        env:
+          SSH_PRIVATE_KEY: ${{secrets.SSH_PASS}}
+          SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS}}
+          SSH_DIR_PATH: ${{ github.workspace }}
